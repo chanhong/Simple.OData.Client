@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.Data.Edm;
+﻿using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Library.Values;
 
 namespace Simple.OData.Client.V3.Adapter
 {
-	public class Metadata : MetadataBase
+	public class Metadata(IEdmModel model, INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall) : MetadataBase(nameMatchResolver, ignoreUnmappedProperties, unqualifiedNameCall)
 	{
-		private readonly IEdmModel _model;
-
-		public Metadata(IEdmModel model, INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall) : base(nameMatchResolver, ignoreUnmappedProperties, unqualifiedNameCall)
-		{
-			_model = model;
-		}
+		private readonly IEdmModel _model = model;
 
 		public override string GetEntityCollectionExactName(string collectionName)
 		{
@@ -168,7 +159,7 @@ namespace Simple.OData.Client.V3.Adapter
 				}
 			}
 
-			return string.Join("/", exactNames.ToArray());
+			return string.Join("/", [.. exactNames]);
 		}
 
 		public override bool HasNavigationProperty(string collectionName, string propertyName)
@@ -208,7 +199,7 @@ namespace Simple.OData.Client.V3.Adapter
 
 			if (entityType.DeclaredKey is null)
 			{
-				return Array.Empty<string>();
+				return [];
 			}
 
 			return entityType.DeclaredKey.Select(x => x.Name);
@@ -227,7 +218,7 @@ namespace Simple.OData.Client.V3.Adapter
 		/// <returns>An empty enumeration of string enumerations representing the key names</returns>
 		public override IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName)
 		{
-			return Enumerable.Empty<IEnumerable<string>>();
+			return [];
 		}
 
 		public override string GetFunctionFullName(string functionName)
@@ -274,7 +265,7 @@ namespace Simple.OData.Client.V3.Adapter
 
 		private bool TryGetEntitySet(string entitySetName, out IEdmEntitySet entitySet)
 		{
-			if (entitySetName.Contains("/"))
+			if (entitySetName.Contains('/'))
 			{
 				entitySetName = entitySetName.Split('/').First();
 			}
@@ -307,7 +298,7 @@ namespace Simple.OData.Client.V3.Adapter
 		private bool TryGetEntityType(string collectionName, out IEdmEntityType? entityType)
 		{
 			entityType = null;
-			if (collectionName.Contains("/"))
+			if (collectionName.Contains('/'))
 			{
 				var segments = GetCollectionPathSegments(collectionName);
 
@@ -407,25 +398,13 @@ namespace Simple.OData.Client.V3.Adapter
 
 		private IEdmStructuralProperty GetStructuralProperty(IEdmStructuredType edmType, string propertyName)
 		{
-			var property = edmType.StructuralProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
-
-			if (property is null)
-			{
-				throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
-			}
-
+			var property = edmType.StructuralProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver) ?? throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
 			return property;
 		}
 
 		private IEdmNavigationProperty GetNavigationProperty(string entitySetName, string propertyName)
 		{
-			var property = GetEntityType(entitySetName).NavigationProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
-
-			if (property is null)
-			{
-				throw new UnresolvableObjectException(propertyName, $"Navigation property [{propertyName}] not found");
-			}
-
+			var property = GetEntityType(entitySetName).NavigationProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver) ?? throw new UnresolvableObjectException(propertyName, $"Navigation property [{propertyName}] not found");
 			return property;
 		}
 
@@ -434,13 +413,7 @@ namespace Simple.OData.Client.V3.Adapter
 			var function = _model.SchemaElements
 				.Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
 				.SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
-				.BestMatch(x => x.Name, functionName, NameMatchResolver);
-
-			if (function is null)
-			{
-				throw new UnresolvableObjectException(functionName, $"Function [{functionName}] not found");
-			}
-
+				.BestMatch(x => x.Name, functionName, NameMatchResolver) ?? throw new UnresolvableObjectException(functionName, $"Function [{functionName}] not found");
 			return function;
 		}
 	}

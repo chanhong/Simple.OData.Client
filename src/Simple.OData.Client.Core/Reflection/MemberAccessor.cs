@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -21,7 +20,7 @@ internal static class MemberAccessor
 			type != memberInfo.DeclaringType ?
 			Expression.Convert(parameter, memberInfo.DeclaringType) : (Expression)parameter;
 
-		var delegateType = Expression.GetDelegateType(new[] { typeof(object), returnType });
+		var delegateType = Expression.GetDelegateType([typeof(object), returnType]);
 		var body = (Expression)Expression.MakeMemberAccess(castedParameter, memberInfo);
 
 		if (body.Type != returnType)
@@ -34,7 +33,7 @@ internal static class MemberAccessor
 
 	public static Delegate BuildStaticGetterAccessor(Type returnType, MemberInfo memberInfo)
 	{
-		var delegateType = Expression.GetDelegateType(new[] { returnType });
+		var delegateType = Expression.GetDelegateType([returnType]);
 		var body = (Expression)Expression.MakeMemberAccess(null, memberInfo);
 
 		if (body.Type != returnType)
@@ -59,7 +58,7 @@ internal static class MemberAccessor
 			valueType != memberType ?
 			Expression.Convert(valueParameter, memberType) : (Expression)valueParameter;
 
-		var delegateType = Expression.GetDelegateType(new[] { typeof(object), valueType, typeof(void) });
+		var delegateType = Expression.GetDelegateType([typeof(object), valueType, typeof(void)]);
 		return Expression.Lambda(delegateType,
 			Expression.Assign(
 				Expression.MakeMemberAccess(castedParameter, memberInfo),
@@ -75,7 +74,7 @@ internal static class MemberAccessor
 			valueType != memberType ?
 			Expression.Convert(valueParameter, memberType) : (Expression)valueParameter;
 
-		var delegateType = Expression.GetDelegateType(new[] { valueType, typeof(void) });
+		var delegateType = Expression.GetDelegateType([valueType, typeof(void)]);
 		return Expression.Lambda(delegateType,
 			Expression.Assign(
 				Expression.MakeMemberAccess(null, memberInfo),

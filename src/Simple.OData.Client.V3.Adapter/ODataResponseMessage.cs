@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Data.OData;
+﻿using Microsoft.Data.OData;
 
 namespace Simple.OData.Client.V3.Adapter;
 
-internal class ODataResponseMessage : IODataResponseMessageAsync
+internal class ODataResponseMessage(HttpResponseMessage response) : IODataResponseMessageAsync
 {
-	private readonly HttpResponseMessage _response;
-
-	public ODataResponseMessage(HttpResponseMessage response)
-	{
-		_response = response;
-	}
+	private readonly HttpResponseMessage _response = response;
 
 	public string GetHeader(string headerName)
 	{

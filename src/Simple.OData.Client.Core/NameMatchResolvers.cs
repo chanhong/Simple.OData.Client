@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Simple.OData.Client.Extensions;
+﻿using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client;
 
@@ -18,16 +16,10 @@ public static class Pluralizers
 	public static IPluralizer Cached = new CachedPluralizer(Simple);
 }
 
-public class ExactMatchResolver : INameMatchResolver
+public class ExactMatchResolver(bool alphanumComparison = false, StringComparison stringComparison = StringComparison.InvariantCulture) : INameMatchResolver
 {
-	private readonly StringComparison _stringComparison;
-	private readonly bool _alphanumComparison;
-
-	public ExactMatchResolver(bool alphanumComparison = false, StringComparison stringComparison = StringComparison.InvariantCulture)
-	{
-		_alphanumComparison = alphanumComparison;
-		_stringComparison = stringComparison;
-	}
+	private readonly StringComparison _stringComparison = stringComparison;
+	private readonly bool _alphanumComparison = alphanumComparison;
 
 	public bool IsMatch(string actualName, string requestedName)
 	{

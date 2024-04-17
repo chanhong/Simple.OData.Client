@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 // Based on gist by Juliën Hanssens
 // https://gist.github.com/hanssens/2835960
@@ -34,7 +30,7 @@ internal class SimplePluralizer : IPluralizer
 	}
 
 	private static readonly string[] _specialWordsStringTable =
-	{
+	[
 			"agendum", "agenda", "",
 			"albino", "albinos", "",
 			"alga", "algae", "",
@@ -125,9 +121,9 @@ internal class SimplePluralizer : IPluralizer
 			"vertebra", "vertebrae", "",
 			"vertex", "vertices", "vertexes",
 			"vortex", "vortices", "vortexes",
-		};
+		];
 	private static readonly string[] _suffixRulesStringTable =
-	{
+	[
 			"ch", "ches",
 			"sh", "shes",
 			"ss", "sses",
@@ -168,28 +164,19 @@ internal class SimplePluralizer : IPluralizer
 			"nife", "nives",
 			"life", "lives",
 			"wife", "wives",
-		};
+		];
 
-	private class Word
+	private class Word(string singular, string plural)
 	{
-		public readonly string Singular;
-		public readonly string Plural;
-		public Word(string singular, string plural)
-		{
-			Singular = singular;
-			Plural = plural;
-		}
+		public readonly string Singular = singular;
+		public readonly string Plural = plural;
 	}
 
-	private class SuffixRule
+	private class SuffixRule(string singular, string plural)
 	{
-		private readonly string _singularSuffix;
-		private readonly string _pluralSuffix;
-		public SuffixRule(string singular, string plural)
-		{
-			_singularSuffix = singular;
-			_pluralSuffix = plural;
-		}
+		private readonly string _singularSuffix = singular;
+		private readonly string _pluralSuffix = plural;
+
 		public bool TryToPlural(string word, out string? plural)
 		{
 			if (word.EndsWith(_singularSuffix, StringComparison.OrdinalIgnoreCase))
@@ -244,7 +231,7 @@ internal class SimplePluralizer : IPluralizer
 
 	private static void PopulateSuffixRules()
 	{
-		_suffixRules = new List<SuffixRule>();
+		_suffixRules = [];
 		for (var i = 0; i < _suffixRulesStringTable.Length; i += 2)
 		{
 			var singular = _suffixRulesStringTable[i];

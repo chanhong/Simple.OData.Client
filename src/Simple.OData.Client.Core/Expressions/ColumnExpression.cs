@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Simple.OData.Client;
 
@@ -92,6 +89,6 @@ internal static class ColumnExpression
 
 		return memberExpression.Expression is MemberExpression
 			? memberExpression.Expression.ExtractColumnNames(typeCache).Select(x => string.Join("/", x, memberName))
-			: new[] { memberName };
+			: [memberName];
 	}
 }

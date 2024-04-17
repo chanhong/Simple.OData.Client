@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using System.Xml.Linq;
 using Microsoft.OData;
 using Microsoft.OData.Edm;
@@ -12,23 +7,15 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-	public class RequestWriter : RequestWriterBase
+	public class RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter) : RequestWriterBase(session, deferredBatchWriter)
 	{
-		private readonly IEdmModel _model;
-		private readonly Dictionary<ODataResource, ResourceProperties> _resourceEntryMap;
-		private readonly Dictionary<ODataResource, List<ODataResource>> _resourceEntries;
-
-		public RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
-			: base(session, deferredBatchWriter)
-		{
-			_model = model;
-			_resourceEntryMap = new Dictionary<ODataResource, ResourceProperties>();
-			_resourceEntries = new Dictionary<ODataResource, List<ODataResource>>();
-		}
+		private readonly IEdmModel _model = model;
+		private readonly Dictionary<ODataResource, ResourceProperties> _resourceEntryMap = [];
+		private readonly Dictionary<ODataResource, List<ODataResource>> _resourceEntries = [];
 
 		private void RegisterRootEntry(ODataResource root)
 		{
-			_resourceEntries.Add(root, new List<ODataResource>());
+			_resourceEntries.Add(root, []);
 		}
 
 		private void UnregisterRootEntry(ODataResource root)
@@ -213,12 +200,7 @@ namespace Simple.OData.Client.V4.Adapter
 
 			foreach (var parameter in parameters)
 			{
-				var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
-				if (operationParameter is null)
-				{
-					throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
-				}
-
+				var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver) ?? throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
 				await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
 			}
 
@@ -502,13 +484,13 @@ namespace Simple.OData.Client.V4.Adapter
 				.Select(x => new KeyValuePair<string, ODataCollectionValue>(
 					findMatchingPropertyName(x.Key),
 					GetPropertyValue(typeProperties, x.Key, x.Value, root) as ODataCollectionValue))
-				.ToDictionary();
+				.ToIDictionary();
 			resourceEntry.StructuralProperties = properties
 				.Where(x => isStructural(findMatchingPropertyType(x.Key)))
 				.Select(x => new KeyValuePair<string, ODataResource>(
 					findMatchingPropertyName(x.Key),
 					GetPropertyValue(typeProperties, x.Key, x.Value, root) as ODataResource))
-				.ToDictionary();
+				.ToIDictionary();
 			_resourceEntryMap.Add(entry, resourceEntry);
 			if (root is not null && _resourceEntries.TryGetValue(root, out var entries))
 			{

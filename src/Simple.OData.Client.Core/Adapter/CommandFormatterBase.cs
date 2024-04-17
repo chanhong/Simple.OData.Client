@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 
 namespace Simple.OData.Client;
 
-public abstract class CommandFormatterBase : ICommandFormatter
+public abstract class CommandFormatterBase(ISession session) : ICommandFormatter
 {
-	protected readonly ISession _session;
-
-	protected CommandFormatterBase(ISession session)
-	{
-		_session = session;
-	}
+	protected readonly ISession _session = session;
 
 	public abstract string ConvertValueToUriLiteral(object value, bool escapeString);
 
@@ -359,7 +351,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 						new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(x,
 							ODataExpandOptions.ByValue())))
 					.Select(x => new KeyValuePair<string, ODataExpandOptions>(a.Key.Name + "/" + x.Key, x.Value))
-				: new[] { new KeyValuePair<string, ODataExpandOptions>(a.Key.Name, a.Value) })
+				: [new KeyValuePair<string, ODataExpandOptions>(a.Key.Name, a.Value)])
 			.ToList();
 	}
 }

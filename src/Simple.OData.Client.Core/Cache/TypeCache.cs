@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 
 namespace Simple.OData.Client;
@@ -261,7 +258,7 @@ public class TypeCache : ITypeCache
 			}
 			else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && ImplicitConversionTo<DateTime>(value) is MethodInfo implicitMethod)
 			{
-				result = (DateTime)implicitMethod.Invoke(value, new object[] { value });
+				result = (DateTime)implicitMethod.Invoke(value, [value]);
 			}
 			else if ((targetType == typeof(DateTimeOffset) || targetType == typeof(DateTimeOffset?)) && value is DateTime time)
 			{

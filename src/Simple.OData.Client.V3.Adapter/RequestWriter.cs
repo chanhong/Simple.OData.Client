@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections;
 using System.Spatial;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
@@ -12,15 +7,9 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V3.Adapter;
 
-public class RequestWriter : RequestWriterBase
+public class RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter) : RequestWriterBase(session, deferredBatchWriter)
 {
-	private readonly IEdmModel _model;
-
-	public RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
-		: base(session, deferredBatchWriter)
-	{
-		_model = model;
-	}
+	private readonly IEdmModel _model = model;
 
 	protected async override Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
 	{
@@ -117,12 +106,7 @@ public class RequestWriter : RequestWriterBase
 
 		foreach (var parameter in parameters)
 		{
-			var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
-			if (operationParameter is null)
-			{
-				throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
-			}
-
+			var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver) ?? throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
 			await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
 		}
 

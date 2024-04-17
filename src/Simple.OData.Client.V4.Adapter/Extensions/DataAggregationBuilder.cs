@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Simple.OData.Client.V4.Adapter.Extensions
 {
@@ -12,7 +9,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
 
 		protected DataAggregationBuilder()
 		{
-			DataAggregationClauses = new List<IDataAggregationClause>();
+			DataAggregationClauses = [];
 		}
 
 		internal string Build(ResolvedCommand command, ISession session)

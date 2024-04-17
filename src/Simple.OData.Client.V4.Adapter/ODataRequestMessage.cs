@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.OData;
+﻿using Microsoft.OData;
 
 namespace Simple.OData.Client.V4.Adapter;
 
 internal class ODataRequestMessage : IODataRequestMessageAsync
 {
 	private MemoryStream _stream;
-	private readonly Dictionary<string, string> _headers = new();
+	private readonly Dictionary<string, string> _headers = [];
 
 	public ODataRequestMessage()
 	{

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Simple.OData.Client;
 
@@ -130,7 +127,7 @@ public partial class ODataExpression
 		return Format(new ExpressionContext(session));
 	}
 
-	private static readonly char[] _propertySeperator = { '.', '/' };
+	private static readonly char[] _propertySeperator = ['.', '/'];
 	internal bool ExtractLookupColumns(IDictionary<string, object> lookupColumns)
 	{
 		switch (_operator)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Linq.Expressions;
 
 namespace Simple.OData.Client;
@@ -103,7 +100,7 @@ public partial class ODataExpression
 	{
 		var elementNames = new List<string>(Reference.Split('.', '/'));
 		var entityCollection = context.EntityCollection;
-		var segmentNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
+		var segmentNames = BuildReferencePath([], entityCollection, elementNames, context);
 		return FormatScope(string.Join("/", segmentNames), context);
 	}
 
@@ -349,7 +346,7 @@ public partial class ODataExpression
 		else
 		{
 			segmentNames.AddRange(elementNames);
-			return BuildReferencePath(segmentNames, null, new List<string>(), context);
+			return BuildReferencePath(segmentNames, null, [], context);
 		}
 	}
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Text;
 
 namespace Simple.OData.Client;
@@ -20,9 +17,9 @@ internal abstract class FunctionToOperatorMapping
 	protected abstract bool CanMap(string functionName, int argumentCount, ODataExpression functionCaller, AdapterVersion adapterVersion = AdapterVersion.Any);
 
 	private static readonly FunctionToOperatorMapping[] DefinedMappings =
-	{
+	[
 			new InOperatorMapping()
-		};
+		];
 }
 
 internal class InOperatorMapping : FunctionToOperatorMapping
@@ -79,7 +76,7 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 			var genericArgumentTypes = valueType.GenericTypeArguments;
 			if (!genericArgumentTypes.Any())
 			{
-				genericArgumentTypes = new[] { typeof(object) };
+				genericArgumentTypes = [typeof(object)];
 				valueType = valueType.MakeGenericType(genericArgumentTypes);
 			}
 

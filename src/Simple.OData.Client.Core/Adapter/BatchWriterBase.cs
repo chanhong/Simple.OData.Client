@@ -1,25 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 namespace Simple.OData.Client;
 
-public abstract class BatchWriterBase : IBatchWriter
+public abstract class BatchWriterBase(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries) : IBatchWriter
 {
-	protected readonly ISession _session;
-	private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap;
+	protected readonly ISession _session = session;
+	private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap = [];
 	protected bool _pendingChangeSet;
-
-	protected BatchWriterBase(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
-	{
-		_session = session;
-		LastOperationId = 0;
-		_contentIdMap = new Dictionary<IDictionary<string, object>, string>();
-		BatchEntries = batchEntries;
-	}
 
 	public abstract Task StartBatchAsync();
 	public abstract Task<HttpRequestMessage> EndBatchAsync();
@@ -67,7 +54,7 @@ public abstract class BatchWriterBase : IBatchWriter
 	protected abstract Task EndChangesetAsync();
 	protected abstract Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired);
 
-	public int LastOperationId { get; private set; }
+	public int LastOperationId { get; private set; } = 0;
 
 	public string NextContentId()
 	{
@@ -95,7 +82,7 @@ public abstract class BatchWriterBase : IBatchWriter
 		}
 	}
 
-	public IDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
+	public IDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; } = batchEntries;
 
 	public async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, IDictionary<string, object> entryData, bool resultRequired)
 	{

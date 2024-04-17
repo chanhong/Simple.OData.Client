@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 
 namespace Simple.OData.Client;
 
@@ -32,14 +28,14 @@ public class ODataRequest
 
 			if (isMetadataRequest)
 			{
-				return new[] { "application/xml" };
+				return ["application/xml"];
 			}
 			else
 			{
 				return _payloadFormat switch
 				{
 					ODataPayloadFormat.Json => new[] { "application/json", "application/xml", "application/text" },
-					_ => new[] { "application/atom+xml", "application/xml", "application/text" },
+					_ => ["application/atom+xml", "application/xml", "application/text"],
 				};
 			}
 		}

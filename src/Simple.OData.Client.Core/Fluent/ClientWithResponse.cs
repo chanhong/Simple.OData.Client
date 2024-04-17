@@ -1,29 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client;
 
-public class ClientWithResponse<T> : IClientWithResponse<T>
+public class ClientWithResponse<T>(ISession session, ODataRequest request, HttpResponseMessage responseMessage) : IClientWithResponse<T>
 	where T : class
 {
-	private readonly ISession _session;
-	private readonly ODataRequest _request;
+	private readonly ISession _session = session;
+	private readonly ODataRequest _request = request;
 
-	public HttpResponseMessage ResponseMessage { get; private set; }
-
-	public ClientWithResponse(ISession session, ODataRequest request, HttpResponseMessage responseMessage)
-	{
-		_session = session;
-		_request = request;
-		ResponseMessage = responseMessage;
-	}
+	public HttpResponseMessage ResponseMessage { get; private set; } = responseMessage;
 
 	private ITypeCache TypeCache => _session.TypeCache;
 
@@ -94,7 +80,7 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 		}
 		else
 		{
-			return Array.Empty<T>();
+			return [];
 		}
 	}
 

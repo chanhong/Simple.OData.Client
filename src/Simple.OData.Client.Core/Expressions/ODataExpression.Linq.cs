@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using Simple.OData.Client.Extensions;
@@ -241,7 +238,7 @@ public partial class ODataExpression
 			new ExpressionFunction()
 			{
 				FunctionName = "isof",
-				Arguments = new List<ODataExpression>() { targetExpression, FromValue(typeIsExpression.TypeOperand) },
+				Arguments = [targetExpression, FromValue(typeIsExpression.TypeOperand)],
 			});
 	}
 
@@ -253,7 +250,7 @@ public partial class ODataExpression
 			new ExpressionFunction()
 			{
 				FunctionName = "cast",
-				Arguments = new List<ODataExpression>() { targetExpression, FromValue(typeAsExpression.Type) },
+				Arguments = [targetExpression, FromValue(typeAsExpression.Type)],
 			});
 	}
 

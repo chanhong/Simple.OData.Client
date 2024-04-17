@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Simple.OData.Client.Extensions;
@@ -25,7 +22,7 @@ internal static class TypeExtensions
 			properties.AddRange(baseType.GetAllProperties().Where(x => properties.All(y => y.Name != x.Name)));
 		}
 
-		return properties.ToArray();
+		return [.. properties];
 	}
 
 	/// <summary>
@@ -69,7 +66,7 @@ internal static class TypeExtensions
 
 	private static bool IsExplicitInterfaceProperty(PropertyInfo propertyInfo)
 	{
-		return propertyInfo.Name.Contains(".");
+		return propertyInfo.Name.Contains('.');
 	}
 
 	private static bool IsIndexerProperty(PropertyInfo propertyInfo)
@@ -98,7 +95,7 @@ internal static class TypeExtensions
 			fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));
 		}
 
-		return fields.ToArray();
+		return [.. fields];
 	}
 
 	public static FieldInfo GetAnyField(this Type type, string fieldName, bool includeNonPublic = false)

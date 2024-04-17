@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 /// <summary>
 /// A container for an OData entry properties. Normally not used directly by the client code.
@@ -17,7 +15,7 @@ public class ODataEntry
 	/// </summary>
 	public ODataEntry()
 	{
-		_entry = new Dictionary<string, object>();
+		_entry = [];
 	}
 
 	/// <summary>

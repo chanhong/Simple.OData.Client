@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Microsoft.OData;
 using Microsoft.OData.Edm;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-	public class ResponseReader : ResponseReaderBase
+	public class ResponseReader(ISession session, IEdmModel model) : ResponseReaderBase(session)
 	{
-		private readonly IEdmModel _model;
-
-		public ResponseReader(ISession session, IEdmModel model)
-			: base(session)
-		{
-			_model = model;
-		}
+		private readonly IEdmModel _model = model;
 
 		public override Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage)
 		{

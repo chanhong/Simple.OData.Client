@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 public class ReferenceLink
 {
@@ -27,7 +25,7 @@ public class EntryDetails
 	{
 		if (!Links.TryGetValue(linkName, out var links))
 		{
-			links = new List<ReferenceLink>();
+			links = [];
 			Links.Add(linkName, links);
 		}
 
